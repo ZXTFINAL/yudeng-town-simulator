@@ -1,0 +1,14 @@
+# Runtime world saves can contain private prompts and local simulation data.
+/data/
+
+# API credentials and local configuration.
+.env
+.env.*
+!.env.example
+
+# Local development artifacts.
+__pycache__/
+*.py[cod]
+node_modules/
+.DS_Store
+*.log

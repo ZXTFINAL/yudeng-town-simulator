@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f4f2eb" />
+  <title>榆灯镇 · 社会模拟器</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="榆灯镇首页">
+        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 36 36"><path d="M18 3 30 9.8v14L18 31 6 23.8v-14L18 3Z"/><path d="M18 10v16M11 14l14 8M25 14l-14 8"/></svg></span>
+        <span><b>榆灯镇</b><small>社会模拟实验</small></span>
+      </a>
+      <div class="topbar-center"><span class="live-dot"></span> <span id="backendStatusLabel">单机模拟 · 本地存档</span></div>
+      <div class="topbar-actions">
+        <button class="small-button" id="randomWorldButton">随机创建世界</button>
+        <button class="small-button" id="townsButton">小镇列表</button>
+        <button class="small-button" id="aiModeButton" title="切换 NPC 回合决策方式">AI 回合：本地策略</button>
+        <button class="avatar-button" id="resetButton" title="重置小镇">重</button>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <section class="intro-row">
+        <div>
+          <div class="eyebrow"><span class="eyebrow-line"></span> 一座正在发生故事的小镇</div>
+          <h1>世界在继续，<em>你来旁观。</em></h1>
+          <p class="intro-copy">居民有自己的目标、习惯和关系。推进时间，看看他们会把榆灯镇带向哪里。</p>
+        </div>
+        <div class="time-control">
+          <div class="time-readout"><span class="sun-icon" id="weatherIcon">☀</span><span><b id="dateLabel">第 1 天</b><small id="periodLabel">早晨 · 08:00</small></span></div>
+          <div class="time-buttons">
+            <button class="button button-primary" id="advanceButton"><span class="play-triangle">▶</span> 推进一轮 <kbd>⏎</kbd></button>
+            <button class="button button-quiet" id="autoButton" title="自动推进"><span class="auto-glyph">▶▶</span></button>
+          </div>
+        </div>
+      </section>
+
+      <section class="stats-grid" aria-label="小镇概况">
+        <article class="stat-card stat-residents"><span class="stat-icon icon-people">♙</span><div><span class="stat-label">镇上居民</span><strong id="residentCount">0 <small>人</small></strong></div><span class="stat-note" id="residentNote">每个人都有自己的故事</span></article>
+        <article class="stat-card"><span class="stat-icon icon-mood">☼</span><div><span class="stat-label">平均心情</span><strong id="moodValue">—<small>/100</small></strong></div><span class="stat-note"><span class="mini-trend">↗</span> <span id="moodNote">镇子的整体氛围</span></span></article>
+        <article class="stat-card"><span class="stat-icon icon-town">⌂</span><div><span class="stat-label">镇公所预算</span><strong id="fundValue">—<small> 元</small></strong></div><span class="stat-note">工资税、租金和建设支出</span></article>
+        <article class="stat-card"><span class="stat-icon icon-events">✳</span><div><span class="stat-label">今日发生</span><strong id="eventCount">0<small> 件事</small></strong></div><span class="stat-note">一轮代表一个生活时段</span></article>
+        <article class="stat-card stat-food"><span class="stat-icon icon-food">♨</span><div><span class="stat-label">镇上食物</span><strong id="foodCount">—<small> 份</small></strong></div><span class="stat-note" id="foodNote">农田与外部采购共同供给</span></article>
+      </section>
+
+      <section class="story-project-grid">
+        <article class="context-card">
+          <div class="context-main"><div class="section-kicker">A TOWN BETWEEN RIVER & RAIL</div><h2>河岸小镇，旧站新生</h2><p id="loreSummary">榆灯镇沿着旧河道和停运的支线铁路长大。洪水带走了老桥，铁路复线计划又带来新的机会；居民要决定，小镇如何在变化里留下自己的生活。</p></div>
+          <div class="outside-note"><span class="outside-icon">↗</span><div><small>镇外消息 · <b id="outsideRegion">青岚县</b></small><p><strong id="outsideHeadline">县道养护进入收尾阶段</strong><span id="outsideDescription">物资车预计明天恢复通行，超市补货会更稳定。</span></p></div></div>
+          <button class="context-link" id="storyDetailButton">背景与周边设定 ↗</button>
+        </article>
+        <article class="supply-card">
+          <div class="project-mark">♨</div><div class="project-copy"><div class="section-kicker">FOOD & TOWN LIFE</div><h2 id="supplyTitle">镇上食物与居民用餐</h2><p id="cropSummary">居民会经营农田、餐厅和外部采购。</p><div class="supply-status" id="supplyStatus">建设计划由居民根据生活需要自行决定。</div></div>
+          <button class="small-button project-button" id="environmentButton">设置周边</button>
+        </article>
+      </section>
+
+      <section class="civic-card" aria-labelledby="civicBoardTitle">
+        <div class="civic-header"><div><div class="section-kicker">RESIDENT ASSEMBLY</div><h2 id="civicBoardTitle">居民提案与投票</h2><p>居民决定建什么、在哪建；每张票和历次结果都在这里。</p></div><button class="small-button" id="civicHistoryButton">查看票单与历史</button></div>
+        <div id="civicBoardContent" aria-live="polite"></div>
+      </section>
+
+      <div class="content-grid">
+        <section class="world-card">
+          <div class="section-heading world-heading">
+            <div><div class="section-kicker">THE NEIGHBORHOOD</div><h2 id="townMapTitle">榆灯镇街区</h2></div>
+            <div class="map-tools">
+              <span class="weather-pill"><span id="weatherText">晴朗</span><i>·</i> <span id="populationLabel">12 位居民</span></span>
+              <button class="small-button" id="scaleButton">规模 6×4</button>
+              <button class="small-button" id="rulesButton">区域规则</button>
+              <button class="small-button" id="justiceButton">治安与司法</button>
+            </div>
+          </div>
+          <div class="map-legend"><span><i class="legend-dot resident-dot"></i> 有居民</span><span><i class="legend-dot empty-dot"></i> 空地</span><span class="build-hint" id="buildHint">居民自主建设 · 点击建筑或地块旁观详情</span></div>
+          <div class="map-wrap"><div class="map-grid" id="mapGrid" aria-label="榆灯镇地图"></div><div class="map-stamp">YUDENG<br/>TOWN <span>·</span> 01</div></div>
+          <div class="map-footer"><span><span class="tiny-sun">✳</span> 榆树大道与灯塔街交汇处</span><span class="map-scale">街区图 <b>01</b> / 01</span></div>
+        </section>
+
+        <aside class="right-column">
+          <section class="detail-card" id="detailCard">
+            <div class="detail-topline"><span class="section-kicker">RESIDENT PROFILE</span><button class="dots-button" id="profileMore" aria-label="更多选项">···</button></div>
+            <div id="residentDetail"></div>
+          </section>
+          <section class="activity-card">
+            <div class="activity-header"><div><div class="section-kicker">TOWN CHRONICLE</div><h2>镇上刚刚发生</h2></div><button id="clearLog" class="text-button">完整历史</button></div>
+            <div class="event-list" id="eventList" aria-live="polite"></div>
+            <div class="activity-footer"><span class="live-dot"></span> 世界在每轮结束后更新</div>
+          </section>
+        </aside>
+      </div>
+
+      <section class="people-section">
+        <div class="section-heading people-heading"><div><div class="section-kicker">THE PEOPLE</div><h2>镇上的人 <span id="peopleCountHeading">12</span></h2></div><button class="small-button" id="addResidentButton"><svg viewBox="0 0 20 20"><path d="M10 4v12M4 10h12"/></svg> 邀请一位居民</button></div>
+        <div class="people-strip" id="peopleStrip"></div>
+      </section>
+
+      <footer class="app-footer"><span>榆灯镇模拟原型 <b>v0.5</b></span><span>每个人都在自己的生活里，悄悄改变世界。</span><button id="aboutButton" class="text-button">关于这个原型 ↗</button></footer>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="modalBackdrop" hidden>
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal-close" id="modalClose" aria-label="关闭">×</button>
+      <div class="section-kicker" id="modalKicker">TOWN BUILDER</div>
+      <h2 id="modalTitle">为小镇添一位居民</h2>
+      <p id="modalDescription">每位居民都会拥有自己的目标、能力和行动工具。</p>
+      <div id="modalContent"></div>
+    </section>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+  <script src="backend-client.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
